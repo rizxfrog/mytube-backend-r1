@@ -1,0 +1,21 @@
+server:
+  port: 8107
+spring:
+  application:
+    name: mytube-search-service
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      server-addr: www.serein.com:8848
+      username: nacos
+      password: nacos
+dubbo:
+  application:
+    name: mytube-search-service
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
+  protocol:
+    name: dubbo
+    port: -1

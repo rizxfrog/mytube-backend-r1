@@ -1,0 +1,28 @@
+server:
+  port: 8109
+spring:
+  config:
+    import: optional:nacos:application.yml
+  application:
+    name: mytube-stats-service
+  datasource:
+    url: jdbc:postgresql://www.serein.com:5432/mytube
+    username: user_D27Hrf
+    password: password_Rh7CzX
+    driver-class-name: org.postgresql.Driver
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      server-addr: www.serein.com:8848
+      username: nacos
+      password: nacos
+dubbo:
+  application:
+    name: mytube-stats-service
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
+  protocol:
+    name: dubbo
+    port: -1

@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: mytube-video-service
+  config:
+    import: optional:nacos:

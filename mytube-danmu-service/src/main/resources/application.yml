@@ -1,0 +1,23 @@
+server:
+  port: 8105
+spring:
+  config:
+    import: optional:nacos:application.yml
+  application:
+    name: mytube-danmu-service
+  cloud:
+    nacos:
+      config:
+        server-addr: www.serein.com:8848
+      discovery:
+        server-addr: www.serein.com:8848
+      username: nacos
+      password: nacos
+dubbo:
+  application:
+    name: mytube-danmu-service
+  registry:
+    address: ${spring.cloud.nacos.server-addr}
+  protocol:
+    name: dubbo
+    port: -1

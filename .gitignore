@@ -1,0 +1,13 @@
+/mytube-comment-service/build/
+/build/
+/mytube-api/build/
+/mytube-common/build/
+/mytube-danmu-service/build/
+/mytube-favorite-service/build/
+/mytube-gateway-graphql/build/
+/mytube-im-service/build/
+/mytube-search-service/build/
+/mytube-stats-service/build/
+/mytube-upload-service/build/
+/mytube-user-service/build/
+/mytube-video-service/build/

@@ -1,0 +1,8 @@
+package com.mytube.api.video;
+
+import java.util.List;
+
+public interface VideoServiceApi {
+    List<Integer> randomVisitorVideos(int count);
+}
+

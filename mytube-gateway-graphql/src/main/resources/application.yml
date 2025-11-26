@@ -1,0 +1,28 @@
+server:
+  port: 8080
+spring:
+  config:
+    import: optional:nacos:application.yml
+  application:
+    name: mytube-gateway-graphql
+  data:
+    redis:
+      host: www.serein.com
+      port: 6379
+      password: redis_6KtBtd
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      server-addr: www.serein.com:8848
+      username: nacos
+      password: nacos
+dubbo:
+  application:
+    name: mytube-gateway-graphql
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
+  protocol:
+    name: dubbo
+    port: -1

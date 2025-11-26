@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="23" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="mytube-backend.mytube-comment-service" options="-parameters" />
+      <module name="mytube-backend.mytube-comment-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-comment-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-danmu-service" options="-parameters" />
+      <module name="mytube-backend.mytube-danmu-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-danmu-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-favorite-service" options="-parameters" />
+      <module name="mytube-backend.mytube-favorite-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-favorite-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-gateway-graphql" options="-parameters" />
+      <module name="mytube-backend.mytube-gateway-graphql.main" options="-parameters" />
+      <module name="mytube-backend.mytube-gateway-graphql.test" options="-parameters" />
+      <module name="mytube-backend.mytube-im-service" options="-parameters" />
+      <module name="mytube-backend.mytube-im-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-im-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-search-service" options="-parameters" />
+      <module name="mytube-backend.mytube-search-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-search-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-stats-service" options="-parameters" />
+      <module name="mytube-backend.mytube-stats-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-stats-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-upload-service" options="-parameters" />
+      <module name="mytube-backend.mytube-upload-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-upload-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-user-service" options="-parameters" />
+      <module name="mytube-backend.mytube-user-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-user-service.test" options="-parameters" />
+      <module name="mytube-backend.mytube-video-service" options="-parameters" />
+      <module name="mytube-backend.mytube-video-service.main" options="-parameters" />
+      <module name="mytube-backend.mytube-video-service.test" options="-parameters" />
+    </option>
+  </component>
+</project>

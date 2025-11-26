@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="LOCAL" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="D:\tools\gradle-9.1.0-all\gradle-9.1.0" />
+        <option name="gradleJvm" value="23" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/mytube-api" />
+            <option value="$PROJECT_DIR$/mytube-comment-service" />
+            <option value="$PROJECT_DIR$/mytube-common" />
+            <option value="$PROJECT_DIR$/mytube-danmu-service" />
+            <option value="$PROJECT_DIR$/mytube-favorite-service" />
+            <option value="$PROJECT_DIR$/mytube-gateway-graphql" />
+            <option value="$PROJECT_DIR$/mytube-im-service" />
+            <option value="$PROJECT_DIR$/mytube-search-service" />
+            <option value="$PROJECT_DIR$/mytube-stats-service" />
+            <option value="$PROJECT_DIR$/mytube-upload-service" />
+            <option value="$PROJECT_DIR$/mytube-user-service" />
+            <option value="$PROJECT_DIR$/mytube-video-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
