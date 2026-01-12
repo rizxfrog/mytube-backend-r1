@@ -1,4 +1,14 @@
 type Query {
   randomVisitorVideos(count: Int): [Int!]!
+  videoGetOne(vid: Int!): Int
+  videoCumulativeVisitor(vids: [Int!]!): [Int!]!
+  uploadAskChunk(hash: String!): Int!
 }
 
+type Mutation {
+  userRegister(username: String!, password: String!): String
+  userLogin(username: String!, password: String!): String
+  adminLogin(username: String!, password: String!):String
+  uploadChunkUrl(hash: String!, index: Int!): String
+  uploadCancel(hash: String!): String
+}

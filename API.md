@@ -1,142 +1,133 @@
-# MyTube 后端 API 文档
+# MyTube 后端 API 文档（完整版）
 
-## 概述
-- 项目根目录：`f:/MyDepository/teriteri/teriteri/mytube-backend`
-- 架构：Spring Boot 3 + Dubbo 3 + MyBatis‑Plus + Nacos + PostgreSQL + GraphQL + MinIO + Elasticsearch 8.19 + Redis（Lettuce）
-- 模块：网关 GraphQL + 多域微服务（用户/视频/评论/收藏/弹幕/IM/搜索/上传/统计）
-- 端口约定（默认，本地开发）：
-  - `mytube-gateway-graphql`：`8080`
-  - `mytube-user-service`：`8101`
-  - `mytube-video-service`：`8102`
-  - `mytube-comment-service`：`8103`
-  - `mytube-favorite-service`：`8104`
-  - `mytube-danmu-service`：`8105`
-  - `mytube-im-service`：`8106`（Netty WebSocket 监听 `7071`）
-  - `mytube-search-service`：`8107`
-  - `mytube-upload-service`：`8108`
-  - `mytube-stats-service`：`8109`
+## 通用约定
+- 鉴权
+  - Header `Authorization: Bearer <token>`；登录与注册接口开放
+  - 角色：`USER` / `ADMIN`；管理员专用接口额外说明
+- 响应包装
+  - 统一结构：`{"code":0,"message":"ok","data":...}`；错误返回 `code!=0` 与明确 `message`
+  - 常见错误码：`1001 未登录/登录过期`、`1002 权限不足`、`2001 参数错误`、`3001 资源不存在`、`5000 服务内部错误`
+- 分页约定
+  - 通用参数：`page`（从1开始）、`quantity`（默认10，最大50）、或 `offset`（从0开始）+`quantity`
+  - 列表返回包含 `more` 或总数 `count` 字段
+- 数据格式
+  - 时间：`yyyy-MM-dd HH:mm`（时区 `Asia/Shanghai`）；ID 统一为数值型
+  - 颜色/弹幕等使用十六进制或明确字符串约定
 
-## 认证
-- 认证方式：JWT（HS256）
-- 请求头：`Authorization: Bearer <token>`
-- 当前网关规则：`/graphql` 允许匿名访问；带 Token 时将解析并写入安全上下文，后续查询与鉴权将逐步收紧到业务维度
-
-## GraphQL 网关
-- 地址：`POST http://<host>:8080/graphql`
-- Content-Type：`application/json`
-- 入参：`{"query": "<GraphQL Query>"}` 或携带 `variables`
-- 当前已提供的 Query：
-  - `randomVisitorVideos(count: Int): [Int!]!`
-    - 说明：为游客返回随机视频 `vid` 列表；目前为占位实现，返回空列表，待接入视频域真实逻辑（来源于旧版 `VideoController.randomVideosForVisitor`）
+## 网关 GraphQL
+- 查询
+  - `randomVisitorVideos(count: Int): [Int!]!` 开放
     - 示例：
-      ```json
-      {"query":"{ randomVisitorVideos(count: 11) }"}
-      ```
-- 后续规划的 GraphQL（将按旧版 REST 迁移）：
-  - `video(id: ID!): Video`
-  - `searchVideos(keyword: String!, page: Int!, size: Int!, onlyPass: Boolean = true): SearchPage!`
-  - `login(username: String!, password: String!): AuthPayload`
-  - `register(input: RegisterInput!): AuthPayload`
-  - `changeVideoStatus(vid: ID!, status: Int!): Boolean`
+      - Query: `query { randomVisitorVideos(count: 11) }`
+      - 响应：`[1,2,3]`
+  - `videoGetOne(vid: Int!): Int` 开放
+  - `videoCumulativeVisitor(vids: [Int!]!): [Int!]!` 开放
+- 变更
+  - `userRegister(username: String!, password: String!, confirmedPassword: String!): String` 开放
+    - 示例：
+      - Mutation: `mutation { userRegister(username:"u", password:"p", confirmedPassword:"p") }`
+  - `userLogin(username: String!, password: String!): String` 开放
+    - 示例：
+      - Mutation: `mutation { userLogin(username:"u", password:"p") }`
 
-## Dubbo 服务契约
-- 注册中心：Nacos，地址 `nacos://127.0.0.1:8848`
-- 协议：`dubbo`，端口按服务自动分配（`port: -1`）
-- 接口示例：
-  - `com.mytube.api.video.VideoServiceApi`
-    - 方法：`List<Integer> randomVisitorVideos(int count)`
-    - 说明：返回随机推荐的视频 `vid` 列表；由 `mytube-video-service` 提供实现（当前为占位）
+## 用户服务 REST
+- `POST /user/account/register` 开放
+  - 参数：`username,password,confirmedPassword`
+  - 返回：`{"code":0,"message":"ok","data":"registered"}`
+- `POST /user/account/login` 开放
+  - 参数：`username,password`
+  - 返回：`{"code":0,"message":"ok","data":"token"}`
+- `GET /user/account/logout` 需认证
+  - 返回：`{"code":0,"message":"ok"}`
+- `GET /user/personal/info` 需认证
+  - 返回：用户信息对象（后续补充字段）
+- `POST /user/info/update` 需认证
+  - 参数：`nickname,description?,gender?`
+  - 返回：`{"code":0,"message":"ok","data":"updated"}`
+- `POST /user/password/update` 需认证
+  - 参数：`pw,npw`
+  - 返回：`{"code":0,"message":"ok","data":"updated"}`
+- `GET /user/info/get-one` 开放
+  - 参数：`uid`
+  - 返回：用户信息对象
 
-## WebSocket 接口
-- 弹幕服务（Danmu）
-  - 地址：`ws://<host>:8105/ws/danmu/{vid}`
-  - 连接说明：按 `vid` 分房间；当前实现将客户端发来的文本消息广播到同房间所有会话（后续将补充 JWT 校验与消息格式约束）
-  - 消息体：自由文本（建议后续统一为 JSON，包含 `token` 与弹幕结构）
-- IM 服务（Netty）
-  - HTTP 升级：`ws://<host>:8106/im`（Netty 服务内部监听 `7071`）
-  - 管线：`HttpServerCodec + ChunkedWriteHandler + HttpObjectAggregator + WebSocketServerProtocolHandler("/im")`
-  - 说明：当前为握手与连接占位，后续将添加登录态校验与消息路由处理器
+## 视频服务 REST
+- `GET /video/random/visitor` 开放
+  - 参数：`count?`
+  - 返回：`{"code":0,"message":"ok","data":[...]}`
+- `GET /video/getone` 开放
+  - 参数：`vid`
+  - 返回：`{"code":0,"message":"ok","data":vid}`
+- `GET /video/cumulative/visitor` 开放
+  - 参数：`vids`（可重复）
+  - 返回：`{"code":0,"message":"ok","data":[...]}`
+- 预期对齐（参考 teriteri-backend 将在后续版本补齐）
+  - `POST /video/change/status`（管理员）
+  - `POST /video/update-meta`（作者或管理员）
+  - `GET /video/user-works-count|user-works|user-love|user-play|user-collect`
 
-## 上传服务（MinIO）
-- 说明：提供生成预签名上传 URL 的服务方法（当前未开放 HTTP Controller）
-- 客户端配置：`minio.endpoint`、`minio.accessKey`、`minio.secretKey`
-- 预签名示例（服务内方法）：
-  - `presignPut(bucket, object, ttlMinutes)` → `String`（预签名 PUT URL）
+## 上传服务 REST
+- `GET /video/ask-chunk` 需认证
+  - 参数：`hash`
+  - 返回：`{"code":0,"message":"ok","data":0}`
+- `POST /video/upload-chunk` 需认证
+  - 参数：`hash,index`
+  - 返回：预签名上传 URL 字符串
+- `GET /video/cancel-upload` 需认证
+  - 参数：`hash`
+- `POST /video/add` 需认证
+  - 参数：`hash,title,type,auth,duration,mcid,scid,tags,descr`
+  - 返回：`{"code":0,"message":"ok","data":"submitted"}`
+  - 说明：当前版本返回占位; 完整版本将进行分片合并、入库、索引与封面处理
 
-## 搜索服务（Elasticsearch 8.19）
-- 客户端：`co.elastic.clients:elasticsearch-java:8.19.0`
-- 配置：`elasticsearch.host`、`elasticsearch.port`（默认 `localhost:9200`）
-- 说明：当前仅配置客户端，索引与查询 API 将按旧版 ES 工具类迁移（视频、用户、搜索词）
+## 统计服务 REST
+- `POST /video/play/visitor` 开放
+  - 参数：`vid`
+  - 返回：`{"code":0,"message":"ok","data":"updated"}`
+- `POST /video/love-or-not` 需认证
+  - 参数：`vid,isLike,isSet`
+  - 返回：`{"code":0,"message":"ok","data":"updated"}`
 
-## 数据库结构（PostgreSQL）
-- 数据库：`mytube`
-- 表：
-  - `users`
-    - `id SERIAL PRIMARY KEY`
-    - `nickname VARCHAR(255) NOT NULL`
-  - `videos`
-    - `id SERIAL PRIMARY KEY`
-    - `title VARCHAR(255) NOT NULL`
-    - `status INTEGER NOT NULL DEFAULT 1`
-  - `comments`
-    - `id SERIAL PRIMARY KEY`
-    - `video_id INTEGER NOT NULL`
-    - `user_id INTEGER NOT NULL`
-    - `content TEXT NOT NULL`
-  - `favorites`
-    - `id SERIAL PRIMARY KEY`
-    - `user_id INTEGER NOT NULL`
-    - `name VARCHAR(255) NOT NULL`
-  - `stats`
-    - `id SERIAL PRIMARY KEY`
-    - `video_id INTEGER NOT NULL`
-    - `play INTEGER NOT NULL DEFAULT 0`
-    - `like INTEGER NOT NULL DEFAULT 0`
-    - `danmu INTEGER NOT NULL DEFAULT 0`
-- 迁移：各服务内 `src/main/resources/db/migration/V1__init.sql` 已提供初始建表
+## 评论服务 REST（计划）
+- `GET /comment/get` 开放（`vid,offset,type`）
+- `GET /comment/reply/get-more` 开放（`id`）
+- `POST /comment/add` 需认证
+- `POST /comment/delete` 需认证（本人/管理员）
+- `GET /comment/get-like-and-dislike` 需认证
+- `POST /comment/love-or-not` 需认证
+- `GET /comment/get-up-like` 开放（`uid`）
 
-## 环境与配置
-- Nacos：`spring.cloud.nacos.config.server-addr=127.0.0.1:8848`
-- Dubbo：
-  - `dubbo.application.name=<module-name>`
-  - `dubbo.registry.address=nacos://127.0.0.1:8848`
-  - `dubbo.protocol.name=dubbo`
-  - `dubbo.protocol.port=-1`
-- 数据源（示例）：
-  - `spring.datasource.url=jdbc:postgresql://localhost:5432/mytube`
-  - `spring.datasource.username=postgres`
-  - `spring.datasource.password=postgres`
-  - `spring.datasource.driver-class-name=org.postgresql.Driver`
-- Redis（示例）：
-  - `spring.redis.host=localhost`
-  - `spring.redis.port=6379`
-- MinIO（示例）：
-  - `minio.endpoint=http://localhost:9000`
-  - `minio.accessKey=minioadmin`
-  - `minio.secretKey=minioadmin`
-- Elasticsearch（示例）：
-  - `elasticsearch.host=localhost`
-  - `elasticsearch.port=9200`
+## 收藏服务 REST（计划）
+- `GET /favorite/get-all/user` 需认证（`uid`）
+- `GET /favorite/get-all/visitor` 开放（`uid`）
+- `POST /favorite/create` 需认证（`title,desc,visible`）
+- `GET /video/collected-fids` 需认证（`vid`）
+- `POST /video/collect` 需认证（`vid,adds[],removes[]`）
+- `POST /video/cancel-collect` 需认证（`vid,fid`）
 
-## 启动步骤（本地开发）
-- 启动依赖：Nacos、PostgreSQL（库 `mytube`）、Redis、MinIO、Elasticsearch
-- 启动服务：
-  - 网关：`gradlew :mytube-gateway-graphql:bootRun`
-  - 其他服务：`gradlew :<module>:bootRun`（如 `:mytube-video-service:bootRun`）
-- 测试 GraphQL：
-  - 请求：`POST /graphql`
-  - Body：`{"query":"{ randomVisitorVideos(count: 11) }"}`
+## 搜索服务 REST（计划）
+- `GET /search/hot/get` 开放
+- `POST /search/word/add` 需认证（管理员）
+- `GET /search/word/get` 开放（`keyword`）
+- `GET /search/count` 开放
+- `GET /search/video/only-pass` 开放（`keyword,page,quantity`）
+- `GET /search/user` 开放（`keyword,page,quantity`）
 
-## 版本说明
-- Spring Boot：`3.3.x`
-- Dubbo：`3.2.x`
-- MyBatis‑Plus：`3.5.x`
-- PostgreSQL 驱动：`42.7.x`
-- Elasticsearch Java Client：`8.19.0`
-- MinIO：`8.x`
+## 弹幕服务 HTTP + WebSocket（计划）
+- HTTP
+  - `GET /danmu-list/{vid}` 开放
+  - `POST /danmu/delete` 需认证（本人/管理员）
+- WebSocket `/ws/danmu/{vid}`
+  - 客户端必须在消息体携带 `token` 与弹幕数据 `content,fontsize,mode,color,timePoint`
+  - 服务端校验后广播同房间，并持久化记录与统计计数
 
-## 变更与迁移计划
-- 逐步将旧版 `teriteri-backend` 的 REST 控制器映射为 GraphQL Query/Mutation
-- 将旧版 Redis 的集合/有序集合缓存策略迁移到各服务
-- 为弹幕与 IM 增加 JWT 校验与消息格式约束
-- 在搜索服务补齐视频与用户索引的查询/索引 API
+## IM 服务 WebSocket（计划）
+- 握手路径：`/im`
+- 首条消息需携带 `Bearer`；服务端校验并绑定用户
+- 消息类型：发送、撤回、历史拉取；维护未读数与在线列表
+
+## 错误示例
+- 未认证访问：`{"code":1001,"message":"unauthorized"}`
+- 参数错误：`{"code":2001,"message":"invalid parameter: vid"}`
+## 备注
+- 本文档覆盖当前已实现的 REST/GraphQL 与后续计划接口，完整实现将严格对齐 `teriteri-backend` 的业务与安全策略，并补充字段、示例与错误码细节。

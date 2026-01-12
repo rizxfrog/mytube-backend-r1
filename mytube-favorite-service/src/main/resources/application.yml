@@ -23,7 +23,7 @@ dubbo:
   application:
     name: mytube-favorite-service
   registry:
-    address: ${spring.cloud.nacos.config.server-addr}
+    address: ${spring.cloud.nacos.config.server-addr}?username=nacos&password=nacos
   protocol:
     name: dubbo
     port: -1

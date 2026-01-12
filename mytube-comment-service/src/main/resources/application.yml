@@ -22,7 +22,7 @@ dubbo:
   application:
     name: mytube-comment-service
   registry:
-    address: nacos://${spring.cloud.nacos.server-addr}
+    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
   protocol:
     name: dubbo
     port: -1

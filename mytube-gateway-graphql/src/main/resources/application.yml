@@ -1,6 +1,9 @@
 server:
   port: 8080
 spring:
+  graphql:
+    schema:
+      locations: classpath:/graphql/
   config:
     import: optional:nacos:application.yml
   application:
@@ -21,8 +24,13 @@ spring:
 dubbo:
   application:
     name: mytube-gateway-graphql
-  registry:
-    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
   protocol:
     name: dubbo
     port: -1
+  consumer:
+    check: false
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
+    parameters:
+      enable-empty-protection: true
+      register-consumer-url: true

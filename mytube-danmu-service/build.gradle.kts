@@ -10,9 +10,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.apache.dubbo:dubbo-spring-boot-starter:3.3.5")
-    
+    implementation("com.baomidou:mybatis-plus-boot-starter:3.5.14")
+    implementation("org.mybatis:mybatis-spring:3.0.3")
+    implementation("org.postgresql:postgresql:42.7.8")
+
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:2025.0.0.0")
     implementation("com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2025.0.0.0")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

@@ -2,23 +2,27 @@ package com.mytube.comment.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@TableName("comments")
+import java.util.Date;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comment {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer videoId;
-    private Integer userId;
+    private Integer vid;
+    private Integer uid;
+    private Integer rootId;
+    private Integer parentId;
+    private Integer toUserId;
     private String content;
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public Integer getVideoId() { return videoId; }
-    public void setVideoId(Integer videoId) { this.videoId = videoId; }
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    private Integer love;
+    private Integer bad;
+    private Date createTime;
+    private Integer isTop;
+    private Integer isDeleted;
 }
-

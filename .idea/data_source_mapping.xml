@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/a552b4e3-a5f8-4b07-bbe8-6b59205f3cd3/console.sql" value="a552b4e3-a5f8-4b07-bbe8-6b59205f3cd3" />
+    <file url="file://$PROJECT_DIR$/mytube-video-service/src/main/resources/db/migration/V1__init.sql" value="a552b4e3-a5f8-4b07-bbe8-6b59205f3cd3" />
+  </component>
+</project>

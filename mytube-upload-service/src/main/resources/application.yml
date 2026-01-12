@@ -13,6 +13,10 @@ spring:
       server-addr: www.serein.com:8848
       username: nacos
       password: nacos
+directory:
+  cover: data/cover
+  video: data/video
+  chunk: data/chunk
 dubbo:
   application:
     name: mytube-upload-service
@@ -21,3 +25,14 @@ dubbo:
   protocol:
     name: dubbo
     port: -1
+
+minio:
+  endpoint: http://www.serein.com:9000
+  accessKey: minio_tyaBYX
+  secretKey: minio_RW4Wsj
+  bucket: mytube
+s3:
+  endpoint: http://www.serein.com:9300
+  accessKey: rustfsadmin
+  secretKey: rustfsadmin_JprDWy
+  bucket: mytube

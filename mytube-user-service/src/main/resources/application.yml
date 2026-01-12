@@ -1,6 +1,13 @@
 server:
   port: 8101
 spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+    default-schema: public
+    schemas: public
+    table: mytube_user_flyway_history
   config:
     import: optional:nacos:application.yml
   application:
@@ -31,3 +38,11 @@ dubbo:
   protocol:
     name: dubbo
     port: -1
+  scan:
+    base-packages: com.mytube.user.provider
+
+s3:
+  endpoint: http://www.serein.com:9300
+  accessKey: rustfsadmin
+  secretKey: rustfsadmin_JprDWy
+  bucket: mytube

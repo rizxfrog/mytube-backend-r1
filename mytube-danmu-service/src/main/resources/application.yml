@@ -17,7 +17,7 @@ dubbo:
   application:
     name: mytube-danmu-service
   registry:
-    address: ${spring.cloud.nacos.server-addr}
+    address: ${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
   protocol:
     name: dubbo
     port: -1
