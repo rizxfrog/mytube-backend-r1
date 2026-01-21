@@ -6,24 +6,51 @@ spring:
   application:
     name: mytube-favorite-service
   datasource:
-    url: jdbc:postgresql://www.serein.com:5432/mytube
-    username: user_D27Hrf
-    password: password_Rh7CzX
+    url: jdbc:postgresql://localhost:5432/mytube
+    username: user_RYTz54
+    password: password_amC7Wx
     driver-class-name: org.postgresql.Driver
-  cloud:
-    nacos:
-      config:
-#        server-addr: www.serein.com:8848
-        import-check:
-          enabled: false
-      username: nacos
-      password: nacos
-      server-addr: www.serein.com:8848
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: redis_fQHPzE
+#  cloud:
+#    nacos:
+#      config:
+##        server-addr: www.serein.com:8848
+#        import-check:
+#          enabled: false
+#      username: nacos
+#      password: nacos
+#      server-addr: www.serein.com:8848
 dubbo:
+  consumer:
+    check: false  # 启动时不检查provider
+    timeout: 10000
+    retries: 0
+  config-center:
+    address: nacos://127.0.0.1:8848
+    username: nacos
+    password: nacos
+  metadata-report:
+    address: nacos://127.0.0.1:8848
+    username: nacos
+    password: nacos
   application:
     name: mytube-favorite-service
+    serialize-allow-list:
+      - com.mytube.favorite.domain.Favorite
+      - com.mytube.favorite.domain.*          # 允许该包下的所有类
+      - com.mytube.common.domain.*            # 如果其他公共DTO也需传输
+      - com.mytube.api.dto.*                  # 你的接口DTO包
+    qos-port: 22224
   registry:
-    address: ${spring.cloud.nacos.config.server-addr}?username=nacos&password=nacos
+    address: nacos://127.0.0.1:8848 # ?username=nacos&password=nacos
+    username: nacos
+    password: nacos
   protocol:
     name: dubbo
     port: -1
+  scan:
+    base-packages: com.mytube.favorite.provider

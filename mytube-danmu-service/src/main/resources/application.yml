@@ -1,10 +1,25 @@
 server:
   port: 8105
 spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    table: mytube_danmu_flyway_history
   config:
     import: optional:nacos:application.yml
   application:
     name: mytube-danmu-service
+  datasource:
+    url: jdbc:postgresql://www.serein.com:5432/mytube
+    username: user_D27Hrf
+    password: password_Rh7CzX
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: www.serein.com
+      port: 6379
+      password: redis_6KtBtd
   cloud:
     nacos:
       config:

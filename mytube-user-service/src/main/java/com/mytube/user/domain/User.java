@@ -2,6 +2,7 @@ package com.mytube.user.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,9 +13,10 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@TableName("users")
 public class User {
     @TableId(type = IdType.AUTO)
-    private Integer uid;
+    private Long uid;
     private String username;
     private String password;
     private String nickname;
@@ -34,4 +36,3 @@ public class User {
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Shanghai")
     private Date deleteDate;
 }
-

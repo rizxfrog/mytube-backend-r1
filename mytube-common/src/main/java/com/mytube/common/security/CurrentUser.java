@@ -25,6 +25,10 @@ public class CurrentUser {
         }
     }
 
+    public Long getUserId() {
+        return requireUserId();
+    }
+
     public String getRole() {
         try {
             RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
@@ -38,5 +42,10 @@ public class CurrentUser {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public boolean isAdmin() {
+        String role = getRole();
+        return role != null && role.equalsIgnoreCase("admin");
     }
 }

@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.dubbo.config.annotation.DubboReference;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/video")
@@ -188,18 +191,59 @@ public class VideoController {
     }
 
     @GetMapping("/random/visitor")
-    public CustomResponse<List<Integer>> randomVisitor(@RequestParam(required = false) Integer count) {
-        return CustomResponse.ok(videoServiceApi.randomVisitorVideos(count == null ? 0 : count));
+    public CustomResponse<Object> randomVisitor(@RequestParam(required = false) Integer count) {
+        int c = count == null || count <= 0 ? 11 : count;
+        Set<Object> idSet = redisUtil.srandmember("video_status:1", c);
+        if (idSet == null || idSet.isEmpty()) {
+            return CustomResponse.ok(new java.util.ArrayList<>());
+        }
+        List<Long> ids = idSet.stream()
+                .filter(Objects::nonNull)
+                .map(v -> Long.parseLong(v.toString()))
+                .toList();
+        return CustomResponse.ok(videoServiceApi.getVideoInfoList(ids));
     }
 
     @GetMapping("/cumulative/visitor")
-    public CustomResponse<List<Integer>> cumulativeVisitor(@RequestParam List<Integer> vids) {
-        return CustomResponse.ok(videoServiceApi.cumulativeVisitorVideos(vids));
+    public CustomResponse<Object> cumulativeVisitor(@RequestParam List<Integer> vids) {
+        List<Integer> vidList = vids == null ? new java.util.ArrayList<>() : vids;
+        Set<Object> set = redisUtil.getMembers("video_status:1");
+        HashMap<String, Object> map = new HashMap<>();
+        if (set == null) {
+            map.put("videos", new java.util.ArrayList<>());
+            map.put("vids", new java.util.ArrayList<>());
+            map.put("more", false);
+            return CustomResponse.ok(map);
+        }
+        vidList.forEach(set::remove);
+        Set<Object> idSet = new java.util.HashSet<>();
+        Random random = new Random();
+        for (int i = 0; i < 10 && !set.isEmpty(); i++) {
+            Object[] arr = set.toArray();
+            int randomIndex = random.nextInt(set.size());
+            idSet.add(arr[randomIndex]);
+            set.remove(arr[randomIndex]);
+        }
+        List<Long> ids = idSet.stream()
+                .filter(Objects::nonNull)
+                .map(v -> Long.parseLong(v.toString()))
+                .toList();
+        map.put("videos", videoServiceApi.getVideoInfoList(ids));
+        map.put("vids", idSet);
+        map.put("more", !set.isEmpty());
+        return CustomResponse.ok(map);
     }
 
     @GetMapping("/getone")
-    public CustomResponse<Integer> getOne(@RequestParam Integer vid) {
-        return CustomResponse.ok(videoServiceApi.getOneVideoById(vid));
+    public CustomResponse<Object> getOne(@RequestParam Integer vid) {
+        Object data = videoServiceApi.getVideoInfo(vid == null ? null : vid.longValue());
+        if (data instanceof java.util.Map<?, ?> map) {
+            Object video = map.get("video");
+            if (video instanceof VideoDAO dao && dao.getStatus() != null && dao.getStatus() != 1) {
+                return CustomResponse.error(404, "Video not found");
+            }
+        }
+        return CustomResponse.ok(data);
     }
 
     @GetMapping("/user-works-count")
@@ -243,10 +287,12 @@ public class VideoController {
 
     @PostMapping("/love-or-not")
     public CustomResponse<String> loveOrNot(@RequestParam("vid") Integer vid,
-                                            @RequestParam("is_like") Integer isLike,
-                                            @RequestParam("is_set") Integer isSet) {
-        boolean love = isLike != null && isLike == 1;
-        boolean set = isSet != null && isSet == 1;
+                                            @RequestParam(value = "is_like", required = false) Integer isLikeSnake,
+                                            @RequestParam(value = "is_set", required = false) Integer isSetSnake,
+                                            @RequestParam(value = "isLove", required = false) Boolean isLoveCamel,
+                                            @RequestParam(value = "isSet", required = false) Boolean isSetCamel) {
+        boolean love = isLikeSnake != null ? isLikeSnake == 1 : (isLoveCamel != null && isLoveCamel);
+        boolean set = isSetSnake != null ? isSetSnake == 1 : (isSetCamel != null && isSetCamel);
         Long uid = currentUser.requireUserId();
         if (uid == null) {
             return CustomResponse.error(401, "Not logged in");

@@ -10,27 +10,30 @@ spring:
     name: mytube-gateway-graphql
   data:
     redis:
-      host: www.serein.com
+      host: localhost
       port: 6379
-      password: redis_6KtBtd
-  cloud:
-    nacos:
-      config:
-        import-check:
-          enabled: false
-      server-addr: www.serein.com:8848
-      username: nacos
-      password: nacos
+      password: redis_fQHPzE
+#  cloud:
+#    nacos:
+#      config:
+#        import-check:
+#          enabled: false
+#      server-addr: www.serein.com:8848
+#      username: nacos
+#      password: nacos
 dubbo:
   application:
     name: mytube-gateway-graphql
+    qos-port: 22220
   protocol:
     name: dubbo
     port: -1
   consumer:
     check: false
   registry:
-    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
+    address: nacos://localhost:8848
     parameters:
       enable-empty-protection: true
       register-consumer-url: true
+    username: nacos
+    password: nacos

@@ -3,8 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mytube-comment-service/mytube-backend.mytube-comment-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mytube-comment-service/mytube-backend.mytube-comment-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mytube-common/mytube-backend.mytube-common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mytube-common/mytube-backend.mytube-common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mytube-danmu-service/mytube-backend.mytube-danmu-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mytube-danmu-service/mytube-backend.mytube-danmu-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mytube-favorite-service/mytube-backend.mytube-favorite-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mytube-favorite-service/mytube-backend.mytube-favorite-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mytube-im-service/mytube-backend.mytube-im-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mytube-im-service/mytube-backend.mytube-im-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mytube-user-service/mytube-backend.mytube-user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mytube-user-service/mytube-backend.mytube-user-service.main.iml" />
     </modules>
   </component>

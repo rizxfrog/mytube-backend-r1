@@ -11,6 +11,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.util.Map;
 
 @DubboService
@@ -27,8 +28,7 @@ public class UserServiceApiImpl implements UserServiceApi {
 
     @Override
     public String register(String username, String password) {
-        CustomResponse resp = userAccountService.register(username, password, password);
-        return resp.getMessage();
+        return userAccountService.register(username, password).getMessage();
     }
 
     @Override
@@ -70,8 +70,20 @@ public class UserServiceApiImpl implements UserServiceApi {
     }
 
     @Override
+    public Object getUserInfoList(java.util.List<Long> uids) {
+        if (uids == null || uids.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        return userService.getUserByIdList(uids);
+    }
+
+    @Override
     public String updateProfile(Long uid, String nickname, String description, Integer gender) {
-        return userService.updateUserInfo(uid, nickname, description, gender).getMessage();
+        try {
+            return userService.updateUserInfo(uid, nickname, description, gender).getMessage();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -7,8 +7,8 @@ public interface UserServiceApi {
     String logout(Long uid);
     Object getPersonalInfo(Long uid);
     Object getUserInfo(Long uid);
+    Object getUserInfoList(java.util.List<Long> uids);
     String updateProfile(Long uid, String nickname, String description, Integer gender);
     String updateAvatar(Long uid, byte[] fileBytes, String filename);
     String updatePassword(Long uid, String pw, String npw);
 }
-

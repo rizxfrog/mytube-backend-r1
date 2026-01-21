@@ -7,14 +7,22 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import com.mytube.im.netty.handler.TokenValidationHandler;
+import com.mytube.im.netty.handler.WebSocketHandler;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ImServer {
+    @Autowired
+    private TokenValidationHandler tokenValidationHandler;
+    @Autowired
+    private WebSocketHandler webSocketHandler;
+
     public void start() throws InterruptedException {
         EventLoopGroup boss = new NioEventLoopGroup();
         EventLoopGroup worker = new NioEventLoopGroup();
@@ -28,10 +36,11 @@ public class ImServer {
                         p.addLast(new HttpServerCodec())
                          .addLast(new ChunkedWriteHandler())
                          .addLast(new HttpObjectAggregator(1024 * 64))
-                         .addLast(new WebSocketServerProtocolHandler("/im"));
+                         .addLast(tokenValidationHandler)
+                         .addLast(new WebSocketServerProtocolHandler("/im"))
+                         .addLast(webSocketHandler);
                     }
                 });
         bootstrap.bind(7071).sync();
     }
 }
-

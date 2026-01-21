@@ -2,7 +2,7 @@ server:
   port: 8101
 spring:
   flyway:
-    enabled: true
+    enabled: false  # dev flyway临时禁用
     locations: classpath:db/migration
     baseline-on-migrate: false
     default-schema: public
@@ -13,28 +13,43 @@ spring:
   application:
     name: mytube-user-service
   datasource:
-    url: jdbc:postgresql://www.serein.com:5432/mytube
-    username: user_D27Hrf
-    password: password_Rh7CzX
+    url: jdbc:postgresql://localhost:5432/mytube
+    username: user_RYTz54
+    password: password_amC7Wx
     driver-class-name: org.postgresql.Driver
   data:
     redis:
-      host: www.serein.com
+      host: localhost
       port: 6379
-      password: redis_6KtBtd
-  cloud:
-    nacos:
-      config:
-        import-check:
-          enabled: false
-      server-addr: www.serein.com:8848
-      username: nacos
-      password: nacos
+      password: redis_fQHPzE
+#  cloud:
+#    nacos:
+#      config:
+#        import-check:
+#          enabled: false
+#      server-addr: www.serein.com:8848
+#      username: nacos
+#      password: nacos
 dubbo:
+  consumer:
+    check: false  # 启动时不检查provider
+    timeout: 10000
+    retries: 0
+  config-center:
+    address: nacos://127.0.0.1:8848
+    username: nacos
+    password: nacos
+  metadata-report:
+    address: nacos://127.0.0.1:8848
+    username: nacos
+    password: nacos
   application:
     name: mytube-user-service
+    qos-port: 22221
   registry:
-    address: nacos://${spring.cloud.nacos.server-addr}?username=nacos&password=nacos
+    address: nacos://127.0.0.1:8848 # ?username=nacos&password=nacos
+    username: nacos
+    password: nacos
   protocol:
     name: dubbo
     port: -1
@@ -42,7 +57,7 @@ dubbo:
     base-packages: com.mytube.user.provider
 
 s3:
-  endpoint: http://www.serein.com:9300
+  endpoint: http://localhost:9300
   accessKey: rustfsadmin
-  secretKey: rustfsadmin_JprDWy
+  secretKey: rustfsadmin_YFSt4t
   bucket: mytube

@@ -6,7 +6,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    implementation("org.projectlombok:lombok:1.18.42")
+//    implementation("org.projectlombok:lombok:1.18.42")
+    compileOnly("org.projectlombok:lombok:1.18.42") // 编译阶段
+    annotationProcessor("org.projectlombok:lombok:1.18.42") // 运行阶段
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.5.8")
     implementation("org.springframework:spring-web:6.2.14")
     implementation("jakarta.servlet:jakarta.servlet-api:6.0.0")

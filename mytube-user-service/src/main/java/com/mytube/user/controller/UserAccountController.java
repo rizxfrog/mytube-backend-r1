@@ -1,15 +1,19 @@
 package com.mytube.user.controller;
 
 import com.mytube.common.web.CustomResponse;
+import com.mytube.user.dto.RegisterRequest;
 import com.mytube.user.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 public class UserAccountController {
@@ -17,15 +21,22 @@ public class UserAccountController {
     private UserAccountService userAccountService;
 
     @PostMapping("/user/account/register")
-    public CustomResponse register(@RequestBody Map<String, String> map) {
-        String username = map.get("username");
-        String password = map.get("password");
-        String confirmedPassword = map.get("confirmedPassword");
-        return userAccountService.register(username, password, confirmedPassword);
+    public CustomResponse<Void> register(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getFieldError() == null ? "Invalid request" : bindingResult.getFieldError().getDefaultMessage();
+            return CustomResponse.error(403, message);
+        }
+        if (!Objects.equals(request.getPassword(), request.getConfirmedPassword())) {
+            return CustomResponse.error(403, "Passwords do not match");
+        }
+        return userAccountService.register(
+                request.getUsername(),
+                request.getPassword()
+        );
     }
 
     @PostMapping("/user/account/login")
-    public CustomResponse login(@RequestBody Map<String, String> map) {
+    public CustomResponse<?> login(@RequestBody Map<String, String> map) {
         String username = map.get("username");
         String password = map.get("password");
         return userAccountService.login(username, password);

@@ -1,0 +1,30 @@
+CREATE TABLE IF NOT EXISTS chat (
+  id bigserial PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  another_id INTEGER NOT NULL,
+  is_deleted SMALLINT NOT NULL DEFAULT 0,
+  unread INTEGER NOT NULL DEFAULT 0,
+  latest_time TIMESTAMP NOT NULL,
+  CONSTRAINT chat_user_another_unique UNIQUE (user_id, another_id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_detailed (
+  id bigserial PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  another_id INTEGER NOT NULL,
+  content VARCHAR(500) NOT NULL,
+  user_del SMALLINT NOT NULL DEFAULT 0,
+  another_del SMALLINT NOT NULL DEFAULT 0,
+  withdraw SMALLINT NOT NULL DEFAULT 0,
+  time TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS msg_unread (
+  uid INTEGER PRIMARY KEY,
+  reply INTEGER NOT NULL DEFAULT 0,
+  "at" INTEGER NOT NULL DEFAULT 0,
+  love INTEGER NOT NULL DEFAULT 0,
+  "system" INTEGER NOT NULL DEFAULT 0,
+  whisper INTEGER NOT NULL DEFAULT 0,
+  "dynamic" INTEGER NOT NULL DEFAULT 0
+);

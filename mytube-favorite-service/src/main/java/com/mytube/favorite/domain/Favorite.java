@@ -14,7 +14,7 @@ import java.util.Date;
 public class Favorite {
     @TableId(type = IdType.AUTO)
     private Integer fid;
-    private Integer uid;
+    private Long uid;
     private Integer type;
     private Integer visible;
     private String cover;
