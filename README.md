@@ -1,9 +1,8 @@
-# MyTube Backend
+# MyTube 后端
 
-Multi-module Gradle build for the MyTube backend. It contains shared libraries,
-Spring Boot services, and a GraphQL gateway.
+MyTube 后端的多模块 Gradle 工程，包含公共库、Spring Boot 服务与 GraphQL 网关。
 
-## Modules
+## 模块
 - mytube-common
 - mytube-api
 - mytube-gateway-graphql
@@ -17,36 +16,35 @@ Spring Boot services, and a GraphQL gateway.
 - mytube-upload-service
 - mytube-stats-service
 
-## Requirements
-- Java 23 (see root toolchain in `build.gradle.kts`)
-- Local Gradle installation (no wrapper in this repo)
+## 环境要求
+- Java 23（见根工程 `build.gradle.kts` 的 toolchain）
+- 本地 Gradle 安装（本仓库无 wrapper）
 
-## Build
+## 构建
 ```bash
 gradle build
 ```
 
-## Run a service
+## 运行单个服务
 ```bash
 gradle :mytube-video-service:bootRun
 ```
 
-## Test a module
+## 运行模块测试
 ```bash
 gradle :mytube-video-service:test
 ```
 
-## Configuration
-Service configs live in each module:
+## 配置
+各服务模块配置文件位置：
 - `src/main/resources/application.yml`
 - `src/main/resources/bootstrap.yml`
 
-Database migrations are under:
+数据库迁移文件位置：
 - `src/main/resources/db/migration`
 
-External dependencies commonly used in this repo include Nacos, PostgreSQL,
-Redis, Flyway, and OSS clients. Keep secrets out of the repo and use
-environment variables or local overrides.
+常用外部依赖包含 Nacos、PostgreSQL、Redis、Flyway 与 OSS 客户端。请勿提交
+密钥，使用环境变量或本地覆盖配置。
 
 ## API
-See `API.md` for the REST and GraphQL endpoint list.
+REST 与 GraphQL 接口列表见 `API.md`。
